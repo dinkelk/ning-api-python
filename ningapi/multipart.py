@@ -57,7 +57,7 @@ class Part(object):
         '''Renders this part -> List of Strings'''
         
         parameters = ['%s="%s"' % (k, v)
-                      for k, v in self.parameters.iteritems()]
+                      for k, v in self.parameters.items()]
         
         lines = ['Content-Disposition: form-data; %s' % '; '.join(parameters)]
         
@@ -66,7 +66,7 @@ class Part(object):
         
         lines.append('')
         
-        if isinstance(self.payload, unicode):
+        if isinstance(self.payload, str):
             lines.append(self.payload.encode('utf-8'))
         else:
             lines.append(self.payload)

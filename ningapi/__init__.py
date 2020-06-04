@@ -5,11 +5,11 @@
 
 import binascii
 import httplib2
-import multipart
+from . import multipart
 import oauth2 as oauth
 import socket
 import ssl
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 try:
     import json
@@ -48,7 +48,7 @@ class HTTPSConnectionV3(httplib2.HTTPSConnectionWithTimeout):
             self._tunnel()
         try:
             self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file, ssl_version=ssl.PROTOCOL_SSLv3)
-        except ssl.SSLError, e:
+        except ssl.SSLError as e:
             print("Trying SSLv3.")
             self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file, ssl_version=ssl.PROTOCOL_SSLv23)
 
@@ -115,7 +115,7 @@ class Client(object):
             mp = multipart.Multipart()
             mp.attach(multipart.FilePart({'name': 'file'}, body['file'],
                 body['content_type']))
-            for k, v in body.items():
+            for k, v in list(body.items()):
                 if k != 'file' and k != 'content_type':
                     mp.attach(multipart.Part({'name': k}, v))
             return self.call("Photo", method="POST", token=self.token,
@@ -126,7 +126,7 @@ class Client(object):
             mp.attach(multipart.Part({'name': 'file', 'filename': 'file'},
                 body['bin'], body['content_type']))
 
-            for k, v in body.items():
+            for k, v in list(body.items()):
                 if k != 'bin' and k != 'content_type':
                     mp.attach(multipart.Part({'name': k}, v))
             return self.call("Photo", method="POST", token=self.token,
@@ -134,25 +134,25 @@ class Client(object):
 
         else:
             return self.call(path, method="POST", token=self.token,
-                body=urllib.urlencode(body))
+                body=urllib.parse.urlencode(body))
 
     def put(self, path, body):
         """Send a PUT request to the Ning API."""
         return self.call(path, method="PUT", token=self.token,
-            body=urllib.urlencode(body))
+            body=urllib.parse.urlencode(body))
 
     def delete(self, path, attrs=None):
         """Send a DELETE request to the Ning API."""
         if attrs is not None:
             path += ('&' if path.find("?") != -1 else '?') + \
-                urllib.urlencode(attrs)
+                urllib.parse.urlencode(attrs)
         return self.call(path, method="DELETE", token=self.token)
 
     def get(self, path, attrs=None):
         """Send a GET request to the Ning API."""
         if attrs is not None:
             path += ('&' if path.find("?") != -1 else '?') + \
-                urllib.urlencode(attrs)
+                urllib.parse.urlencode(attrs)
         return self.call(path, token=self.token)
 
     def login(self, login, password):

@@ -1,7 +1,7 @@
 import unittest
-import basetest
+from . import basetest
 
-from config import TestConfig
+from .config import TestConfig
 
 
 class TestToken(basetest.BaseTestCase):

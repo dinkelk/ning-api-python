@@ -18,11 +18,11 @@ class ContentBase(object):
     @classmethod
     def get_field_names(cls, include_resources=False,
                         include_admin_fields=False):
-        field_names = cls.field_map.keys()
+        field_names = list(cls.field_map.keys())
         if include_resources:
             field_names += cls.sub_resources
         if include_admin_fields:
-            field_names += cls.admin_field_map.keys()
+            field_names += list(cls.admin_field_map.keys())
         return field_names
 
     @classmethod
@@ -30,7 +30,7 @@ class ContentBase(object):
 
         field_dict = {}
 
-        for (k, v) in json_dict.items():
+        for (k, v) in list(json_dict.items()):
             map_result = cls.field_map.get(k, k)
 
             if type(map_result) is tuple:

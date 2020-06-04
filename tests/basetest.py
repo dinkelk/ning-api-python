@@ -2,7 +2,7 @@ import random
 import oauth2 as oauth
 import unittest
 import ningapi
-from config import TestConfig
+from .config import TestConfig
 
 
 class BaseTestCase(unittest.TestCase):

@@ -1,5 +1,5 @@
 import unittest
-import basetest
+from . import basetest
 
 from ningapi import NingError
 from ningapi.types import Activity, BlogPost, Photo, User
@@ -19,7 +19,7 @@ class FieldsBaseTest(basetest.BaseTestCase):
 
         try:
             content = self.api.get(self.endpoint, attrs)
-        except NingError, e:
+        except NingError as e:
             if (e.error_code == 4 and e.error_subcode == 1):
                 self.fail("'%s' does not accept field: '%s'" % (self.endpoint,
                     self.field_name))
@@ -28,27 +28,27 @@ class FieldsBaseTest(basetest.BaseTestCase):
         entry = content['entry'][0]
         self.assertIn(self.field_name, entry,
             "Response should contain '%s' field but found: %s" % (
-            self.field_name, ", ".join(entry.keys())))
+            self.field_name, ", ".join(list(entry.keys()))))
 
 
 class TestActivityFields(FieldsBaseTest):
     endpoint = "Activity/recent"
-    field_names = Activity.field_map.keys()
+    field_names = list(Activity.field_map.keys())
 
 
 class TestBlogFields(FieldsBaseTest):
     endpoint = "BlogPost/recent"
-    field_names = BlogPost.field_map.keys()
+    field_names = list(BlogPost.field_map.keys())
 
 
 class TestPhotoFields(FieldsBaseTest):
     endpoint = "Photo/recent"
-    field_names = Photo.field_map.keys()
+    field_names = list(Photo.field_map.keys())
 
 
 class TestUserFields(FieldsBaseTest):
     endpoint = "User/recent"
-    field_names = User.field_map.keys()
+    field_names = list(User.field_map.keys())
 
 
 def build_suite(test_class):

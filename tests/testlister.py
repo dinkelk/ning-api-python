@@ -1,5 +1,5 @@
 import unittest
-import basetest
+from . import basetest
 
 
 class TestListers(basetest.BaseTestCase):

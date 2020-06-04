@@ -1,6 +1,6 @@
 from optparse import OptionParser
 import json
-import ConfigParser
+import configparser
 import oauth2 as oauth
 
 import ningapi
@@ -16,7 +16,7 @@ class NingToken(object):
         print(content)
 
     def dump(self, content):
-        print json.dumps(content, sort_keys=True, indent=4)
+        print(json.dumps(content, sort_keys=True, indent=4))
 
 
 class NingResource(object):
@@ -65,7 +65,7 @@ class NingResource(object):
         raise NotImplementedError
 
     def dump(self, content):
-        print json.dumps(content, sort_keys=True, indent=4)
+        print(json.dumps(content, sort_keys=True, indent=4))
 
 
 class NingWriteResource(NingResource):
@@ -169,7 +169,7 @@ class NingComment(NingWriteResource):
         try:
             params["attachedTo"] = args.pop(0)
         except IndexError:
-            print "Missing the content ID, unable to attach comment"
+            print("Missing the content ID, unable to attach comment")
             return
 
         return super(NingComment, self).list(client, options, args,
@@ -184,7 +184,7 @@ class NingComment(NingWriteResource):
         try:
             resource_fields["attachedTo"] = args.pop(0)
         except IndexError:
-            print "Missing the content ID, unable to attach comment"
+            print("Missing the content ID, unable to attach comment")
             return
 
         return super(NingComment, self).create(client, options, args,
@@ -309,7 +309,7 @@ def main():
     (options, args) = parser.parse_args()
 
 
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.read("config.cfg")
 
     if options.subdomain:
@@ -328,13 +328,13 @@ def main():
     try:
         consumer_key = config.get(subdomain, "consumer_key")
         consumer_secret = config.get(subdomain, "consumer_secret")
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         try:
-            print "Unable to find a key for this network, using the default"
+            print("Unable to find a key for this network, using the default")
             consumer_key = config.get("DEFAULTS", "consumer_key")
             consumer_secret = config.get("DEFAULTS", "consumer_secret")
-        except ConfigParser.NoOptionError:
-            print "No consumer key found, unable to continue"
+        except configparser.NoOptionError:
+            print("No consumer key found, unable to continue")
             return
 
     consumer = oauth.Consumer(key=consumer_key, secret=consumer_secret)
@@ -343,8 +343,8 @@ def main():
         access_key = config.get(config_header, "access_key")
         access_secret =config.get(config_header, "access_secret")
         token = oauth.Token(key=access_key, secret=access_secret)
-    except ConfigParser.NoSectionError:
-        print "Couldn't find a token, going without it"
+    except configparser.NoSectionError:
+        print("Couldn't find a token, going without it")
         token = None
 
 
@@ -355,30 +355,30 @@ def main():
         resource_name = args.pop(0)
     except IndexError:
         # TODO: Output list of available resources
-        print "Missing resource name"
+        print("Missing resource name")
         return
 
     try:
         action_name = args.pop(0)
     except IndexError:
         # TODO: Output list of available options
-        print "Missing action name"
+        print("Missing action name")
         return
 
     resource = service_directory.get(resource_name, None)
     if not resource:
-        print "Invalid resource name: %s" % resource_name
+        print("Invalid resource name: %s" % resource_name)
         return
 
     action = getattr(resource, action_name, None)
     if not action:
-        print "Invalid action for %s: %s" % (action_name, resource_name)
+        print("Invalid action for %s: %s" % (action_name, resource_name))
         return
 
     try:
         action(client, options, args)
-    except ningapi.NingError, e:
-        print "Ning Error: %s" % str(e)
+    except ningapi.NingError as e:
+        print("Ning Error: %s" % str(e))
 
 
 if __name__ == "__main__":
