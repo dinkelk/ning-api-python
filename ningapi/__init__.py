@@ -86,14 +86,14 @@ class Client(object):
             protocol = self.INSECURE_PROTOCOL
             connection_type = None # default
 
-        url = '%s%s/xn/rest/%s/1.0/%s' % (protocol, self.host, self.network,
+        url = '%s%s/xn/rest/%s/2.0/%s' % (protocol, self.host, self.network,
             url)
         self.client = oauth.Client(self.consumer, token)
         if self.method is not None:
             self.client.set_signature_method(self.method)
 
         resp, content = self.client.request(url, method, headers=headers,
-            body=body, connection_type=connection_type)
+            body=bytes(body, "utf-8"), connection_type=connection_type)
         if int(resp['status']) != 200:
             try:
                 result = json.loads(content)
